@@ -3,10 +3,12 @@ package pl.braincode.heimdall.models;
 public class ResultItem {
 
     public String title;
-    public String url;
+    public String siteUrl;
+    public String pictureUrl;
 
-    public ResultItem(String title, String url) {
+    public ResultItem(String title, String siteUrl, String pictureUrl) {
+        this.pictureUrl = pictureUrl;
         this.title = title;
-        this.url = url;
+        this.siteUrl = siteUrl;
     }
 }
