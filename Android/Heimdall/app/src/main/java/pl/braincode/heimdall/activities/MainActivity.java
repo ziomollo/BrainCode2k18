@@ -2,8 +2,6 @@ package pl.braincode.heimdall.activities;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.Application;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
@@ -23,18 +21,26 @@ import android.view.View;
 import android.widget.Button;
 
 import java.io.IOException;
+import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
 import pl.braincode.heimdall.R;
 import pl.braincode.heimdall.models.ResultItem;
+import pl.braincode.heimdall.services.BifrostAPI;
+import pl.braincode.heimdall.services.ServiceGenerator;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Callback {
-    private static final int MY_PERMISSIONS_REQUEST_CAM = 1995 ;
+    private static final int MY_PERMISSIONS_REQUEST_CAM = 1995;
     private static final String TAG = MainActivity.class.getSimpleName();
     Camera camera;
     SurfaceView surfaceView;
     FloatingActionButton floatingActionButton;
     SurfaceHolder surfaceHolder;
-
+    BifrostAPI bifrostUserAPI;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,15 +50,38 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
         surfaceView = findViewById(R.id.surfaceView);
         floatingActionButton = findViewById(R.id.button);
 
+
+        bifrostUserAPI = ServiceGenerator.createService(BifrostAPI.class);
+
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 camera.takePicture(null, null, null, new Camera.PictureCallback() {
                     @Override
                     public void onPictureTaken(byte[] bytes, Camera camera) {
+                            RequestBody body = RequestBody.create(MediaType.parse("image/raw"), bytes);
+                            Call<List<ResultItem>> call = bifrostUserAPI.sendImage(body);
+                            call.enqueue(new Callback<List<ResultItem>>() {
+                                @Override
+                                public void onResponse(Call<List<ResultItem>> call, Response<List<ResultItem>> response) {
+                                    int code = response.code();
+                                    if (code == 200) {
+                                        List<ResultItem> results = response.body();
+                                        Log.d(TAG, "Did work: " + String.valueOf(code));
+                                        Log.d(TAG, "Result[0] " + results.get(0).title);
+                                    } else {
+                                        Log.d(TAG, "Did not work: " + String.valueOf(code));
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<List<ResultItem>> call, Throwable t) {
+                                    Log.d(TAG, "Failure");
+                                }
+                            });
                         Intent intent = new Intent( getBaseContext() , ResultActivity.class);
                         startActivity(intent);
-                    }
+                        }
                 });
             }
         });
@@ -113,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     cameraInit();
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }

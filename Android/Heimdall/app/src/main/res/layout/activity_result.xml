@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="textPersonName"
-            android:hint="Write your "
+            android:hint="Wprowadź zapytanie"
             android:text="" />
     </android.support.v7.widget.CardView>
 </android.support.constraint.ConstraintLayout>
