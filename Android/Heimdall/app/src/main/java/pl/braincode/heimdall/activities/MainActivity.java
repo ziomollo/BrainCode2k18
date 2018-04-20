@@ -85,6 +85,11 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
                 });
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -96,12 +101,17 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
         }
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        camera.release();
+    }
+
     private void cameraInit(){
         camera = Camera.open();
         getWindow().setFormat(PixelFormat.UNKNOWN);
         surfaceHolder = surfaceView.getHolder();
         surfaceHolder.addCallback(this);
-        surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         setCameraDisplayOrientation(this, 0, camera);
     }
 
