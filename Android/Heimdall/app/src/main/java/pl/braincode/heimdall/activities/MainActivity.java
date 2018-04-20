@@ -2,6 +2,9 @@ package pl.braincode.heimdall.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.Application;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import android.graphics.PixelFormat;
@@ -21,6 +24,7 @@ import android.widget.Button;
 import java.io.IOException;
 
 import pl.braincode.heimdall.R;
+import pl.braincode.heimdall.models.ResultItem;
 
 public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Callback {
     private static final int MY_PERMISSIONS_REQUEST_CAM = 1995 ;
@@ -45,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
                 camera.takePicture(null, null, null, new Camera.PictureCallback() {
                     @Override
                     public void onPictureTaken(byte[] bytes, Camera camera) {
-
+                        Intent intent = new Intent( getBaseContext() , ResultActivity.class);
+                        startActivity(intent);
                     }
                 });
             }
