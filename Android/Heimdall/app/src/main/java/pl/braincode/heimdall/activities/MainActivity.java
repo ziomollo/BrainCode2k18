@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
         setContentView(R.layout.activity_main);
 
         surfaceView = findViewById(R.id.surfaceView);
+        button = findViewById(R.id.button);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,7 +50,11 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
                 });
             }
         });
+    }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
