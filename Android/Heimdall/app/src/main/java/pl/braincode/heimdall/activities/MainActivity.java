@@ -2,6 +2,7 @@ package pl.braincode.heimdall.activities;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 
 import android.graphics.PixelFormat;
@@ -18,15 +19,11 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.Button;
 
-import org.apache.commons.io.FileUtils;
-
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import pl.braincode.heimdall.R;
 import pl.braincode.heimdall.models.ResultItem;
 import pl.braincode.heimdall.services.BifrostAPI;
@@ -59,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
             public void onClick(View view) {
                 camera.takePicture(null, null, null, new Camera.PictureCallback() {
                     @Override
-                    public void onPictureTaken(byte[] bytes, Camera camera){
+                    public void onPictureTaken(byte[] bytes, Camera camera) {
                             RequestBody body = RequestBody.create(MediaType.parse("image/raw"), bytes);
                             Call<List<ResultItem>> call = bifrostUserAPI.sendImage(body);
                             call.enqueue(new Callback<List<ResultItem>>() {
@@ -80,7 +77,9 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
                                     Log.d(TAG, "Failure");
                                 }
                             });
-                    }
+                        Intent intent = new Intent( getBaseContext() , ResultActivity.class);
+                        startActivity(intent);
+                        }
                 });
             }
         });
