@@ -15,7 +15,6 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 
 import pl.braincode.heimdall.R;
-import pl.braincode.heimdall.activities.ResultActivity;
 import pl.braincode.heimdall.models.ResultItem;
 
 public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder> {
@@ -62,7 +61,6 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
         ResultItem resultItem = resultItems.get(position);
 
         Picasso.get().load(resultItem.pictureUrl).into(holder.pictureView);
-        //holder.pictureView.setImageURI( Uri.parse(resultItem.pictureUrl) );
         holder.titleView.setText(resultItem.title);
         holder.priceView.setText(resultItem.price+" zł");
         holder.siteUrl = resultItem.siteUrl;
