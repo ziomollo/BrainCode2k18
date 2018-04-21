@@ -1,56 +1,49 @@
 package com.heimdall.bifrost.services;
 
-import com.google.cloud.vision.v1.*;
-import com.google.protobuf.ByteString;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.heimdall.bifrost.models.Entity;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
+import javax.json.JsonObject;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class GoogleVisionRequests {
 
     Logger logger = LoggerFactory.getLogger(GoogleVisionRequests.class);
-    public Optional<List<String>> getTagsFromAnImage(byte[] bytes) {
-        ArrayList<String> strings = new ArrayList<>();
 
-        try (ImageAnnotatorClient vision = ImageAnnotatorClient.create()) {
+    private RestTemplate template;
+    private String requestUrl;
 
-            ByteString imgBytes = ByteString.copyFrom(bytes);
+    public GoogleVisionRequests() {
+        template = new RestTemplate();
+        requestUrl = "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDjkHIGT-bFJemoNR7HtfnTYCgV9NviEis";
+    }
 
-            List<AnnotateImageRequest> requests = new ArrayList<>();
-
-            Image img = Image.newBuilder().setContent(imgBytes).build();
-
-            Feature feature = Feature.newBuilder().setType(Feature.Type.LABEL_DETECTION).build();
-
-            AnnotateImageRequest request = AnnotateImageRequest.newBuilder()
-                    .addFeatures(feature)
-                    .setImage(img)
-                    .build();
-            requests.add(request);
-
-            BatchAnnotateImagesResponse response = vision.batchAnnotateImages(requests);
-            List<AnnotateImageResponse> responses = response.getResponsesList();
-
-            for (AnnotateImageResponse res : responses) {
-                if (res.hasError()) {
-                    System.out.printf("Error: %s\n", res.getError().getMessage());
-                }
-
-                for (EntityAnnotation annotation : res.getLabelAnnotationsList()) {
-                    annotation.getAllFields().forEach((k, v) ->
-                            strings.add(String.format("%s : %s\n", k, v.toString())));
-                }
-            }
-        } catch (IOException e) {
-            return Optional.empty();
-        }
-
-        return Optional.of(strings);
+    public String getImageDetails(byte[] bytes){
+       String request = "{\n" +
+               " \"requests\":[\n" +
+               "   {\n" +
+               "     \"image\":{\n" +
+               "       \"content\": " + '"' + java.util.Base64.getEncoder().encodeToString(bytes) + '"' +
+               "     },\n" +
+               "     \"features\":[\n" +
+               "       {\n" +
+               "         \"type\":\"WEB_DETECTION\"\n" +
+               "       }\n" +
+               "     ]\n" +
+               "   }\n" +
+               " ]\n" +
+               "}";
+       HttpEntity<String> entity = new HttpEntity<>(request);
+       ResponseEntity<String> jsonResponse = template.exchange(requestUrl,HttpMethod.POST,entity,String.class);
+       return jsonResponse.getBody();
     }
 
 }
