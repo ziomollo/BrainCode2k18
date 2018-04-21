@@ -15,6 +15,7 @@ import java.util.List;
 
 import pl.braincode.heimdall.R;
 import pl.braincode.heimdall.adapters.ResultAdapter;
+import pl.braincode.heimdall.adapters.SearchPhraseAdapter;
 import pl.braincode.heimdall.models.ResultItem;
 import pl.braincode.heimdall.models.SearchPhrase;
 import pl.braincode.heimdall.services.BifrostAPI;
@@ -28,9 +29,14 @@ public class ResultActivity extends AppCompatActivity {
     private static final String TAG = ResultActivity.class.getSimpleName();
 
     public static final String SEARCH_PHRASE_EXTRA = "SEARCH_PHRASE_EXTRA";
+
     private RecyclerView recyclerView;
     private ResultAdapter resultAdapter;
     private RecyclerView.LayoutManager layoutManager;
+
+    private RecyclerView searchPhraseRecyclerView;
+    private SearchPhraseAdapter searchPhraseResultAdapter;
+    private RecyclerView.LayoutManager searchPhraseLayoutManager;
 
     ArrayList<ResultItem> results;
 
@@ -72,5 +78,19 @@ public class ResultActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(resultAdapter);
+
+        ArrayList<SearchPhrase> searchPhrases = new ArrayList<>();
+        searchPhrases.add(new SearchPhrase("test"));
+        searchPhrases.add(new SearchPhrase("test2"));
+        searchPhrases.add(new SearchPhrase("test3"));
+        searchPhrases.add(new SearchPhrase("test4"));
+
+        searchPhraseLayoutManager = new LinearLayoutManager(this);
+
+        searchPhraseRecyclerView = findViewById(R.id.recyclerView);
+        searchPhraseResultAdapter = new SearchPhraseAdapter(searchPhrases);
+        searchPhraseRecyclerView.setLayoutManager(searchPhraseLayoutManager);
+        searchPhraseRecyclerView.setAdapter(searchPhraseResultAdapter);
+
     }
 }
