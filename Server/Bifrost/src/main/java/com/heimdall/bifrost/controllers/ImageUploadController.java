@@ -35,7 +35,12 @@ public class ImageUploadController {
         ArrayList<SearchPhrase> searchPhrases = new ArrayList<>(10);
         JSONObject googleVisionResult = googleVisionRequests.getImageDetails(bytes);
         for( int i = 0 ; i < 10 ; i++ ){
-            searchPhrases.add(new SearchPhrase( googleVisionResult.getJSONObject("responses").getJSONArray("labelAnnotations").getJSONObject(i).get("description").toString() ));
+            try{
+                String value = googleVisionResult.getJSONArray("responses").getJSONObject(0).getJSONObject("webDetection").getJSONArray("webEntities").getJSONObject(i).get("description").toString();
+                searchPhrases.add(new SearchPhrase( value ));
+            }catch(Exception e){
+
+            }
         }
         return searchPhrases;
     }
