@@ -13,10 +13,10 @@ import retrofit2.http.POST;
 
 public interface BifrostAPI {
 
-    @POST("imagetest")
-    Call<SearchPhrase> sendImage(@Body RequestBody bytes);
+    @POST("image")
+    Call<ArrayList<SearchPhrase>> sendImage(@Body RequestBody bytes);
 
-    @POST("tags")
+    @POST("search")
     Call<ArrayList<ResultItem>> getResults(@Body SearchPhrase phrase);
 
 //    @GET("tescik")
