@@ -27,6 +27,7 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import pl.braincode.heimdall.R;
 import pl.braincode.heimdall.models.ResultItem;
+import pl.braincode.heimdall.models.SearchPhrase;
 import pl.braincode.heimdall.services.BifrostAPI;
 import pl.braincode.heimdall.services.ServiceGenerator;
 import retrofit2.Call;
@@ -60,27 +61,29 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
                     @Override
                     public void onPictureTaken(byte[] bytes, Camera camera) {
                             RequestBody body = RequestBody.create(MediaType.parse("image/raw"), bytes);
-                            Call<List<ResultItem>> call = bifrostUserAPI.sendImage(body);
-                            call.enqueue(new Callback<List<ResultItem>>() {
+                            Call<SearchPhrase> call = bifrostUserAPI.sendImage(body);
+                            call.enqueue(new Callback<SearchPhrase>() {
                                 @Override
-                                public void onResponse(Call<List<ResultItem>> call, Response<List<ResultItem>> response) {
+                                public void onResponse(Call<SearchPhrase> call, Response<SearchPhrase> response) {
                                     int code = response.code();
                                     if (code == 200) {
-                                        List<ResultItem> results = response.body();
+                                        SearchPhrase result = response.body();
                                         Log.d(TAG, "Did work: " + String.valueOf(code));
-                                        Log.d(TAG, "Result[0] " + results.get(0).title);
+                                        Log.d(TAG, "Result[0] " + result.phrase);
+
+                                        Intent intent = new Intent( getBaseContext() , ResultActivity.class);
+                                        intent.putExtra(ResultActivity.SEARCH_PHRASE_EXTRA, result.phrase);
+                                        startActivity(intent);
                                     } else {
                                         Log.d(TAG, "Did not work: " + String.valueOf(code));
                                     }
                                 }
 
                                 @Override
-                                public void onFailure(Call<List<ResultItem>> call, Throwable t) {
+                                public void onFailure(Call<SearchPhrase> call, Throwable t) {
                                     Log.d(TAG, "Failure");
                                 }
                             });
-                        Intent intent = new Intent( getBaseContext() , ResultActivity.class);
-                        startActivity(intent);
                         }
                 });
             }
@@ -89,7 +92,6 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
 
     @Override
     protected void onStart() {
-        super.onStart();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -99,6 +101,7 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
         } else {
             cameraInit();
         }
+        super.onStart();
     }
 
     @Override
