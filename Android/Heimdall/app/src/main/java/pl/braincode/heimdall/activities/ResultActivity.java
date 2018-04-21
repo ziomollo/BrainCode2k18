@@ -60,18 +60,18 @@ public class ResultActivity extends AppCompatActivity {
         resultAdapter = new ResultAdapter(results);
 
 
-//        call.enqueue(new Callback<ArrayList<ResultItem>>() {
-//            @Override
-//            public void onResponse(Call<ArrayList<ResultItem>> call, Response<ArrayList<ResultItem>> response) {
-//                results.addAll(response.body());
-//                resultAdapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onFailure(Call<ArrayList<ResultItem>> call, Throwable t) {
-//                Log.d(TAG, "Failure");
-//            }
-//        });
+        call.enqueue(new Callback<ArrayList<ResultItem>>() {
+            @Override
+            public void onResponse(Call<ArrayList<ResultItem>> call, Response<ArrayList<ResultItem>> response) {
+                results.addAll(response.body());
+                resultAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<ResultItem>> call, Throwable t) {
+                Log.d(TAG, "Failure");
+            }
+        });
 
 
         layoutManager = new LinearLayoutManager(this);
