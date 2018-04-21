@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:foreground="?attr/selectableItemBackground"
+    android:id="@+id/searchPhraseCardView"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:clickable="true"
+    android:background="#7e7875"
+    app:cardBackgroundColor="#7e7875">
+
+    <TextView
+        android:id="@+id/phrase"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:text="Tekst"
+        android:textColor="#FFFFFF" />
+</android.support.v7.widget.CardView>
