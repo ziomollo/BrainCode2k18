@@ -33,7 +33,7 @@ public class AllegroRequests {
 
         return headers;
     }
-    public List<ResultItem> ebin(String phrase){
+    public List<ResultItem> searchForProducts(String phrase){
 
         HttpEntity<String> entity = new HttpEntity<>(getHttpHeaders());
 

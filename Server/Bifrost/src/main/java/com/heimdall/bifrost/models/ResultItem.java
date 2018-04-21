@@ -32,7 +32,7 @@ public class ResultItem {
     }
 
     private static boolean isAuction(JSONObject object){
-        return object.getBoolean("auction");
+        return object.getBoolean("auction") || object.getBoolean("advert");
     }
 
     private static boolean isBuyNow(JSONObject object){

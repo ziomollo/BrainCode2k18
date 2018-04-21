@@ -25,6 +25,7 @@ public class GoogleTranslateRequests {
 
     public ArrayList<String> translateStrings(ArrayList<String> stringsToTranslate) {
         HttpEntity<String> entity = new HttpEntity<>("");
+
         //String url =  String.copyValueOf(requestUrl.toCharArray(),0,requestUrl.length());
         String url = requestUrl;
         for (String stringToTranslate : stringsToTranslate) {

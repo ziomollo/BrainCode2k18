@@ -49,9 +49,9 @@ public class ImageUploadController {
                         .getJSONArray("responses")
                         .getJSONObject(0)
                         .getJSONObject("webDetection")
-                        .getJSONArray("bestGuessLabels")
+                        .getJSONArray("webEntities")
                         .getJSONObject(i)
-                        .get("label")
+                        .get("description")
                         .toString();
                 searchPhrases.add(new SearchPhrase( value ));
             }catch(Exception e){
@@ -60,21 +60,20 @@ public class ImageUploadController {
         }
 
         ArrayList<String> a = searchPhrases.stream()
-                .map(searchPhrase -> searchPhrase.phrase)
+                .map(SearchPhrase::getPhrase)
                 .collect(Collectors.toCollection(ArrayList::new));
         ArrayList<String> polishPhrases = googleTranslateRequests.translateStrings(a);
         for (int i = 0; i < searchPhrases.size(); i++) {
-            searchPhrases.get(i).phrase = polishPhrases.get(i);
+            searchPhrases.get(i).setPhrase(polishPhrases.get(i));
         }
-
         return searchPhrases;
     }
 
-    @GetMapping(value = "/search/{phrase}")
-    public List<ResultItem> search(@PathVariable("phrase") String phrase){
+    @PostMapping(value = "/search")
+    public List<ResultItem> search(@RequestBody SearchPhrase phrase){
        // ArrayList<ResultItem> resultItems = new ArrayList<>(10);
 
-        return allegroRequests.ebin(phrase);
+        return allegroRequests.searchForProducts(phrase.getPhrase());
 
     }
 

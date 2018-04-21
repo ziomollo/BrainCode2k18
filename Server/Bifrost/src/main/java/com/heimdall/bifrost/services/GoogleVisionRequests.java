@@ -1,7 +1,5 @@
 package com.heimdall.bifrost.services;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.heimdall.bifrost.models.Entity;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +7,6 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
-
-import javax.json.JsonObject;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class GoogleVisionRequests {
 
