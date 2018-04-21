@@ -5,12 +5,15 @@ public class ResultItem {
     public String title;
     public String siteUrl;
     public String pictureUrl;
-    public double price;
+    public double buyNowPrice;
+    public double auctionPrice;
 
-    public ResultItem(String title, String siteUrl, String pictureUrl, double price) {
-        this.pictureUrl = pictureUrl;
+    public ResultItem(String title, String siteUrl, String pictureUrl, double buyNowPrice, double auctionPrice) {
         this.title = title;
         this.siteUrl = siteUrl;
-        this.price = price;
+        this.pictureUrl = pictureUrl;
+        this.buyNowPrice = buyNowPrice;
+        this.auctionPrice = auctionPrice;
     }
+
 }

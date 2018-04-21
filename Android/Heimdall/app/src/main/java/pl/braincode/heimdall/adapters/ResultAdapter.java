@@ -26,6 +26,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
         public ImageView pictureView;
         public TextView titleView;
         public TextView priceView;
+        public TextView buyNowView;
         public String siteUrl;
 
         public ViewHolder(View view) {
@@ -33,6 +34,7 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
             pictureView = view.findViewById(R.id.picture);
             titleView = view.findViewById(R.id.title);
             priceView = view.findViewById(R.id.price);
+            buyNowView = view.findViewById(R.id.buyNow);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -62,7 +64,13 @@ public class ResultAdapter extends RecyclerView.Adapter<ResultAdapter.ViewHolder
 
         Picasso.get().load(resultItem.pictureUrl).into(holder.pictureView);
         holder.titleView.setText(resultItem.title);
-        holder.priceView.setText(resultItem.price+" zł");
+        if(resultItem.buyNowPrice != 0) {
+            holder.priceView.setText(resultItem.buyNowPrice+" zł");
+            holder.buyNowView.setVisibility(View.VISIBLE);
+        } else {
+            holder.priceView.setText(resultItem.auctionPrice+" zł");
+            holder.buyNowView.setVisibility(View.GONE);
+        }
         holder.siteUrl = resultItem.siteUrl;
     }
 
