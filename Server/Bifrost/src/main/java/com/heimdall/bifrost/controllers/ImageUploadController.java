@@ -1,24 +1,33 @@
 package com.heimdall.bifrost.controllers;
 
 
+import com.heimdall.bifrost.models.ResultItem;
 import com.heimdall.bifrost.models.SearchPhrase;
+import com.heimdall.bifrost.services.AllegroRequests;
+import com.heimdall.bifrost.services.GoogleTranslateRequests;
 import com.heimdall.bifrost.services.GoogleVisionRequests;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 public class ImageUploadController {
     private GoogleVisionRequests googleVisionRequests = new GoogleVisionRequests();
+    private GoogleTranslateRequests googleTranslateRequests = new GoogleTranslateRequests();
+
     private final Logger logger = LoggerFactory.getLogger(ImageUploadController.class);
 
+    AllegroRequests allegroRequests;
+
+    ImageUploadController(){
+        allegroRequests = new AllegroRequests();
+    }
     @PostMapping("/upload")
     public String uploadFile(@RequestParam("file") MultipartFile multipartFile){
         logger.debug("File upload!");
@@ -36,14 +45,40 @@ public class ImageUploadController {
         JSONObject googleVisionResult = googleVisionRequests.getImageDetails(bytes);
         for( int i = 0 ; i < 10 ; i++ ){
             try{
-                String value = googleVisionResult.getJSONArray("responses").getJSONObject(0).getJSONObject("webDetection").getJSONArray("webEntities").getJSONObject(i).get("description").toString();
+                String value = googleVisionResult
+                        .getJSONArray("responses")
+                        .getJSONObject(0)
+                        .getJSONObject("webDetection")
+                        .getJSONArray("bestGuessLabels")
+                        .getJSONObject(i)
+                        .get("label")
+                        .toString();
                 searchPhrases.add(new SearchPhrase( value ));
             }catch(Exception e){
 
             }
         }
+
+        ArrayList<String> a = searchPhrases.stream()
+                .map(searchPhrase -> searchPhrase.phrase)
+                .collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<String> polishPhrases = googleTranslateRequests.translateStrings(a);
+        for (int i = 0; i < searchPhrases.size(); i++) {
+            searchPhrases.get(i).phrase = polishPhrases.get(i);
+        }
+
         return searchPhrases;
     }
+
+    @GetMapping(value = "/search/{phrase}")
+    public List<ResultItem> search(@PathVariable("phrase") String phrase){
+       // ArrayList<ResultItem> resultItems = new ArrayList<>(10);
+
+        return allegroRequests.ebin(phrase);
+
+    }
+
+
 
     @PostMapping(value = "/imagetest")
     public String mock(@RequestBody byte[] bytes){

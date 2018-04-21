@@ -32,7 +32,9 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "FilterOptionsType", propOrder = {
 
 })
-public class FilterOptionsType {
+public class
+
+FilterOptionsType {
 
     @XmlElement(required = true)
     protected String filterId;
