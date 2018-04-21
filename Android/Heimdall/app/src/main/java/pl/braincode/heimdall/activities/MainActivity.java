@@ -18,15 +18,14 @@ import android.view.Surface;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
-import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import pl.braincode.heimdall.R;
-import pl.braincode.heimdall.models.ResultItem;
 import pl.braincode.heimdall.models.SearchPhrase;
 import pl.braincode.heimdall.services.BifrostAPI;
 import pl.braincode.heimdall.services.ServiceGenerator;
@@ -61,26 +60,32 @@ public class MainActivity extends AppCompatActivity implements  SurfaceHolder.Ca
                     @Override
                     public void onPictureTaken(byte[] bytes, Camera camera) {
                             RequestBody body = RequestBody.create(MediaType.parse("image/raw"), bytes);
-                            Call<SearchPhrase> call = bifrostUserAPI.sendImage(body);
-                            call.enqueue(new Callback<SearchPhrase>() {
+                            Call<ArrayList<SearchPhrase>> call = bifrostUserAPI.sendImage(body);
+                            call.enqueue(new Callback<ArrayList<SearchPhrase>>() {
                                 @Override
-                                public void onResponse(Call<SearchPhrase> call, Response<SearchPhrase> response) {
+                                public void onResponse(Call<ArrayList<SearchPhrase>> call, Response<ArrayList<SearchPhrase>> response) {
                                     int code = response.code();
                                     if (code == 200) {
-                                        SearchPhrase result = response.body();
-                                        Log.d(TAG, "Did work: " + String.valueOf(code));
-                                        Log.d(TAG, "Result[0] " + result.phrase);
+                                        ArrayList<SearchPhrase> result = response.body();
+                                        if(result != null && !result.isEmpty()) {
+                                            Log.d(TAG, "Did work: " + String.valueOf(code));
+                                            Log.d(TAG, "Result[0] " + result.get(0).phrase);
 
-                                        Intent intent = new Intent( getBaseContext() , ResultActivity.class);
-                                        intent.putExtra(ResultActivity.SEARCH_PHRASE_EXTRA, result.phrase);
-                                        startActivity(intent);
+                                            Intent intent = new Intent( getBaseContext() , ResultActivity.class);
+                                            intent.putParcelableArrayListExtra(ResultActivity.SEARCH_PHRASE_EXTRA, result);
+                                            startActivity(intent);
+                                        } else {
+                                            Toast.makeText(MainActivity.this,
+                                                    "Nie znaleziono przedmitu, spróbuj ponownie",
+                                                    Toast.LENGTH_SHORT).show();
+                                        }
                                     } else {
                                         Log.d(TAG, "Did not work: " + String.valueOf(code));
                                     }
                                 }
 
                                 @Override
-                                public void onFailure(Call<SearchPhrase> call, Throwable t) {
+                                public void onFailure(Call<ArrayList<SearchPhrase>> call, Throwable t) {
                                     Log.d(TAG, "Failure");
                                 }
                             });

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -31,6 +32,7 @@ public class ResultActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private ResultAdapter resultAdapter;
     private RecyclerView.LayoutManager layoutManager;
+    private EditText editText;
 
     ArrayList<ResultItem> results;
 
@@ -42,28 +44,34 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
+        editText = findViewById(R.id.editText);
+
         results = new ArrayList<>();
-
         bifrostUserAPI = ServiceGenerator.createService(BifrostAPI.class);
+        ArrayList<SearchPhrase> phrases = getIntent().getParcelableArrayListExtra(SEARCH_PHRASE_EXTRA);
 
-        String phrase = getIntent().getStringExtra(SEARCH_PHRASE_EXTRA);
-        SearchPhrase searchPhrase = new SearchPhrase(phrase);
-        Call<ArrayList<ResultItem>> call = bifrostUserAPI.getResults(searchPhrase);
+        for(SearchPhrase phrase : phrases) {
+            Log.d(TAG, phrase.phrase);
+        }
 
+        editText.setText(phrases.get(0).phrase);
+
+        Call<ArrayList<ResultItem>> call = bifrostUserAPI.getResults(phrases.get(0));
         resultAdapter = new ResultAdapter(results);
 
-        call.enqueue(new Callback<ArrayList<ResultItem>>() {
-            @Override
-            public void onResponse(Call<ArrayList<ResultItem>> call, Response<ArrayList<ResultItem>> response) {
-                results.addAll(response.body());
-                resultAdapter.notifyDataSetChanged();
-            }
 
-            @Override
-            public void onFailure(Call<ArrayList<ResultItem>> call, Throwable t) {
-                Log.d(TAG, "Failure");
-            }
-        });
+//        call.enqueue(new Callback<ArrayList<ResultItem>>() {
+//            @Override
+//            public void onResponse(Call<ArrayList<ResultItem>> call, Response<ArrayList<ResultItem>> response) {
+//                results.addAll(response.body());
+//                resultAdapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<ArrayList<ResultItem>> call, Throwable t) {
+//                Log.d(TAG, "Failure");
+//            }
+//        });
 
 
         layoutManager = new LinearLayoutManager(this);
