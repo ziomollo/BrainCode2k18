@@ -1,6 +1,7 @@
 package com.heimdall.bifrost.controllers;
 
 
+import com.heimdall.bifrost.models.SearchPhrase;
 import com.heimdall.bifrost.services.GoogleVisionRequests;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 
 @RestController
 public class ImageUploadController {
@@ -28,8 +31,13 @@ public class ImageUploadController {
     }
 
     @PostMapping(value = "/image")
-    public String takeFile(@RequestBody byte[] bytes){
-        return googleVisionRequests.getImageDetails(bytes);
+    public ArrayList<SearchPhrase> takeFile(@RequestBody byte[] bytes){
+        ArrayList<SearchPhrase> searchPhrases = new ArrayList<>(10);
+        JSONObject googleVisionResult = googleVisionRequests.getImageDetails(bytes);
+        for( int i = 0 ; i < 10 ; i++ ){
+            searchPhrases.add(new SearchPhrase( googleVisionResult.getJSONObject("responses").getJSONArray("labelAnnotations").getJSONObject(i).get("description").toString() ));
+        }
+        return searchPhrases;
     }
 
     @PostMapping(value = "/imagetest")

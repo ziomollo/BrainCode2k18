@@ -26,7 +26,7 @@ public class GoogleVisionRequests {
         requestUrl = "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyDjkHIGT-bFJemoNR7HtfnTYCgV9NviEis";
     }
 
-    public String getImageDetails(byte[] bytes){
+    public JSONObject getImageDetails(byte[] bytes){
        String request = "{\n" +
                " \"requests\":[\n" +
                "   {\n" +
@@ -43,7 +43,7 @@ public class GoogleVisionRequests {
                "}";
        HttpEntity<String> entity = new HttpEntity<>(request);
        ResponseEntity<String> jsonResponse = template.exchange(requestUrl,HttpMethod.POST,entity,String.class);
-       return jsonResponse.getBody();
+       return new JSONObject(jsonResponse.getBody());
     }
 
 }
